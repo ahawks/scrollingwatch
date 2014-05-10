@@ -14,6 +14,7 @@ InverterLayer *needle_line;
 InverterLayer *invert_screen_layer;
 
 char hour_buffer[] = "00";
+char minutes_buffer[] = "00";
 char hour_a_buffer[] = "00";
 char hour_b_buffer[] = "00";
 char hour_c_buffer[] = "00";
@@ -97,7 +98,7 @@ void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 
 	int minutes = tick_time->tm_min;
 	float hour_percent = (float)minutes/60.0;
-	
+	snprintf(minutes_buffer, sizeof("00"), "%d", minutes);
 	if (clock_is_24h_style()) {
 		i += 24;
 		snprintf(hour_buffer, sizeof("00"), "%d", hours24[i%24]);
@@ -168,7 +169,7 @@ void handle_init(void) {
 	text_layer_set_font(text_b, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
 	layer_add_child(container_layer, (Layer*) text_b);
 
-	text_b30 = text_layer_create(GRect(start_x, (center_y + (SPACER*1.5)), end_x, 30));
+	text_b30 = text_layer_create(GRect(start_x, (center_y + (SPACER*1.6)), end_x, 30));
 	text_layer_set_text_color(text_b30, GColorBlack);
 	text_layer_set_text_alignment(text_b30, GTextAlignmentCenter);
 	text_layer_set_font(text_b30, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
@@ -192,8 +193,10 @@ void handle_init(void) {
 	
 	// push window to stack 
 	layer_add_child(window_get_root_layer(my_window), (Layer*) needle_line);
-	invert_screen_layer = inverter_layer_create(GRect(0, 0, 144, 168));
-	layer_add_child(window_get_root_layer(my_window), (Layer*) invert_screen_layer);
+
+// invert screen	
+//	invert_screen_layer = inverter_layer_create(GRect(0, 0, 144, 168));
+//	layer_add_child(window_get_root_layer(my_window), (Layer*) invert_screen_layer);
 
 	window_stack_push(my_window, true);
 }
