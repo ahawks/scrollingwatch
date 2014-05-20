@@ -1,4 +1,8 @@
 {
+    "uuid": "0d3c16ef-6e0c-4fa3-9475-3cbda560971a",
+    "capabilities": [
+        "configurable"
+    ],
     "appKeys": {
         "invert": 1
     },
@@ -6,22 +10,18 @@
         "media": [
             {
                 "name": "APP_ICON",
-                "file": "images/time goes by.png",
                 "type": "png",
+                "file": "images/time goes by.png",
                 "menuIcon": true
             }
         ]
     },
+    "versionCode": 1,
+    "shortName": "Time Goes By",
+    "longName": "Time Goes By",
     "watchapp": {
         "watchface": true
     },
-    "shortName": "Time Goes By",
-    "versionLabel": "1.1",
-    "versionCode": 1,
     "companyName": "ahawks",
-    "uuid": "0d3c16ef-6e0c-4fa3-9475-3cbda560971a",
-    "capabilities": [
-        "configurable"
-    ],
-    "longName": "Time Goes By"
+    "versionLabel": "1.1"
 }
