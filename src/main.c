@@ -1,4 +1,5 @@
 #include <pebble.h>
+#include "autoconfig.h"
 
 Window *my_window;
 TextLayer *text_now;
@@ -27,6 +28,16 @@ const int CONTAINER_HEIGHT = 250;
 const int SPACER = 130;
 int font_size = 49;
 int base_y;
+
+static void in_received_handler(DictionaryIterator *iter, void *context) {
+        // Let Pebble Autoconfig handle received settings
+        autoconfig_in_received_handler(iter, context);
+
+        // Here the updated settings are available
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Configuration updated. Background: %s", 
+                getBackground() ? "true" : "false"); 
+}
+
 
 void container_update_proc(struct Layer *layer, GContext *ctx) {
 	int center_y = CONTAINER_HEIGHT / 2;
@@ -125,6 +136,19 @@ void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 }
 
 void handle_init(void) {
+    // Initialize Pebble Autoconfig to register App Message handlers and restores settings
+    autoconfig_init();
+    // Here the restored or defaulted settings are available
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Configuration restored. Background: %s", 
+            getBackground() ? "true" : "false");
+
+    // Register our custom receive handler which in turn will call Pebble Autoconfigs receive handler
+    app_message_register_inbox_received(in_received_handler);
+
+
+
+
+
 	my_window = window_create();
 
 	// set up the text labels
@@ -215,6 +239,9 @@ void handle_deinit(void) {
 	inverter_layer_destroy(needle_line);
 	inverter_layer_destroy(invert_screen_layer);
 	window_destroy(my_window);
+
+	// Let Pebble Autoconfig write settings to Pebbles persistant memory
+    autoconfig_deinit();
 }
 
 int main(void) {

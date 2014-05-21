@@ -1,10 +1,22 @@
 {
     "uuid": "0d3c16ef-6e0c-4fa3-9475-3cbda560971a",
-    "capabilities": [
-        "configurable"
-    ],
+    "capabilities": [ "configurable" ],
     "appKeys": {
-        "invert": 1
+        "background": 0
+    },
+    "preferences": {
+        "embedded": false,
+        "debug": true,
+        "url" : "http://wiki.pebble-autoconfig.googlecode.com/git/example/autoconfig.html",
+        "description": "Use the form to configure your <strong>Pebble Watch</strong>",
+        "items": [{
+                "name": "background",
+                "title": "Background color",
+                "type": "boolean",
+                "off-text": "White",
+                "on-text": "Black",
+                "default": true
+        }]
     },
     "resources": {
         "media": [
