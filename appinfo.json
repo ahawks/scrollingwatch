@@ -5,7 +5,7 @@
         "background": 0
     },
     "preferences": {
-        "embedded": false,
+        "embedded": true,
         "debug": true,
         "url" : "http://wiki.pebble-autoconfig.googlecode.com/git/example/autoconfig.html",
         "description": "Use the form to configure your <strong>Pebble Watch</strong>",
