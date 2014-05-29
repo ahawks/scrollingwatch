@@ -4,6 +4,7 @@
     "appKeys": {
         "background": 0
     },
+
     "preferences": {
         "embedded": true,
         "debug": true,
@@ -35,5 +36,5 @@
         "watchface": true
     },
     "companyName": "ahawks",
-    "versionLabel": "1.1"
+    "versionLabel": "1.2"
 }
