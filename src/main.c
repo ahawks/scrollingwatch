@@ -29,16 +29,19 @@ const int SPACER = 130;
 int font_size = 49;
 int base_y;
 
+// SETTINGS
 static void in_received_handler(DictionaryIterator *iter, void *context) {
         // Let Pebble Autoconfig handle received settings
         autoconfig_in_received_handler(iter, context);
 
         // Here the updated settings are available
         APP_LOG(APP_LOG_LEVEL_DEBUG, "Configuration updated. Background: %s", 
-                getBackground() ? "true" : "false"); 
+                getBackground() ? "true (black)" : "false (white)"); 
+        layer_mark_dirty(container_layer);
 }
 
-
+// rendering function for container layer. 
+// Draws all of the lines and rectangles. 
 void container_update_proc(struct Layer *layer, GContext *ctx) {
 	int center_y = CONTAINER_HEIGHT / 2;
 	
@@ -102,8 +105,15 @@ void container_update_proc(struct Layer *layer, GContext *ctx) {
 		graphics_draw_line(ctx, GPoint(0, center_y - (SPACER * multiplier)), GPoint(5, center_y - (SPACER * multiplier)));
 	}
 
+	//invert screen	
+	if (getBackground()) {
+		layer_add_child(window_get_root_layer(my_window), (Layer*) invert_screen_layer);
+	} else {
+		layer_remove_from_parent((Layer*) invert_screen_layer);
+	}
 }
 
+// tick response function. Updates the position of the 'container_layer' and numeric values. 
 void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 	int i = tick_time->tm_hour; // add an extra <cycle> so the -1 value works. We modulo it anyway. 
 
@@ -135,6 +145,9 @@ void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 	layer_set_bounds(container_layer, GRect(0, y_offset, 144, 168));
 }
 
+/** 
+Initializes the watch face. Creates all layers
+**/
 void handle_init(void) {
     // Initialize Pebble Autoconfig to register App Message handlers and restores settings
     autoconfig_init();
@@ -144,10 +157,6 @@ void handle_init(void) {
 
     // Register our custom receive handler which in turn will call Pebble Autoconfigs receive handler
     app_message_register_inbox_received(in_received_handler);
-
-
-
-
 
 	my_window = window_create();
 
@@ -217,10 +226,9 @@ void handle_init(void) {
 	
 	// push window to stack 
 	layer_add_child(window_get_root_layer(my_window), (Layer*) needle_line);
-
-// invert screen	
-//	invert_screen_layer = inverter_layer_create(GRect(0, 0, 144, 168));
-//	layer_add_child(window_get_root_layer(my_window), (Layer*) invert_screen_layer);
+	
+	// create the invert layer, in case it's used
+	invert_screen_layer = inverter_layer_create(GRect(0, 0, 144, 168));
 
 	window_stack_push(my_window, true);
 }
