@@ -1,4 +1,5 @@
 #include <pebble.h>
+#include <math.h>
 #include "autoconfig.h"
 
 Window *my_window;
@@ -23,6 +24,35 @@ char hour_c_buffer[] = "00";
 char buffer[] = "00";
 int hours12[] = {12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
 int hours24[] = {00, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23};
+int tick_widths[] = {
+					30, 	// hour
+					5, 		// 5
+					5, 		// 10
+					10, 	// 15
+					5, 		// 20
+					5, 		// 25
+					20, 	// 30
+					5, 		// 35
+					5, 		// 40
+					10, 	// 45
+					5, 		// 50
+					5, 		// 55
+				};
+
+int tick_heights[] = {
+					3, 	// hour
+					1, 	// 5
+					1, 	// 10
+					3, 	// 15
+					1, 	// 20
+					1, 	// 25
+					3, 	// 30
+					1, 	// 35
+					1, 	// 40
+					3, 	// 45
+					1, 	// 50
+					1, 	// 55
+				};
 
 const int CONTAINER_HEIGHT = 250;
 const int SPACER = 130;
@@ -40,69 +70,33 @@ static void in_received_handler(DictionaryIterator *iter, void *context) {
         layer_mark_dirty(container_layer);
 }
 
+void draw_tick_line(GContext *ctx, bool left_side, int minute) {
+	int center_y = CONTAINER_HEIGHT / 2;
+	float tmp = (float)minute / 60.0;
+	int distance = floor(SPACER * tmp);
+
+	int width = tick_widths[abs(minute % 60)/5];
+	int height = tick_heights[abs(minute % 60)/5];
+	int x = left_side ? 0 : 144 - width;
+	int y = center_y - 1 - distance; 
+	
+	// draw the tick
+	graphics_fill_rect(ctx, GRect(x, y, width, height),
+				  	0, GCornerNone);
+
+}
+
 // rendering function for container layer. 
 // Draws all of the lines and rectangles. 
 void container_update_proc(struct Layer *layer, GContext *ctx) {
-	int center_y = CONTAINER_HEIGHT / 2;
 	
 	graphics_context_set_stroke_color(ctx, GColorBlack);
-	for (int line_i = -2; line_i < 3; line_i += 1) {
-		// draw hour-boxes (3px tall)
-		graphics_fill_rect(ctx, GRect(144-30,  center_y - 1 - (SPACER*line_i), 30, 3), 0, GCornerNone );
-		graphics_fill_rect(ctx, GRect(0,  center_y - 1 - (SPACER*line_i), 30, 3), 0, GCornerNone );
-		
-		// 15 min
-		graphics_fill_rect(ctx, GRect(144-10, center_y - 1 - (SPACER*(line_i+.25)), 10, 3), 0, GCornerNone );
-		graphics_fill_rect(ctx, GRect(0,  center_y - 1 - (SPACER*(line_i+.25)), 10, 3), 0, GCornerNone );
-		
-		// 30 min 
-		graphics_fill_rect(ctx, GRect(144-20,  center_y - 1 - (SPACER*(line_i+.5)), 20, 3), 0, GCornerNone );
-		graphics_fill_rect(ctx, GRect(0,  center_y - 1 - (SPACER*(line_i+.5)), 20, 3), 0, GCornerNone );
-		
-		// 45 min
-		graphics_fill_rect(ctx, GRect(144-10,  center_y - 1 - (SPACER*(line_i+.75)), 10, 3), 0, GCornerNone );
-		graphics_fill_rect(ctx, GRect(0,  center_y - 1 - (SPACER*(line_i+.75)), 10, 3), 0, GCornerNone );
-		
-		// 5 = 0.083
-		float multiplier;
-		multiplier = line_i + .083;
-		graphics_draw_line(ctx, GPoint(144-5, center_y - (SPACER * multiplier)), GPoint(144, center_y - (SPACER * multiplier)));
-		graphics_draw_line(ctx, GPoint(0, center_y - (SPACER * multiplier)), GPoint(5, center_y - (SPACER * multiplier)));
+	for (int minute = -90; minute < 60; minute += 5) {
+		// todo: preferences for left style
+		draw_tick_line(ctx, true, minute);
 
-		// 10 = 0.166
-		multiplier = line_i + .166;
-		graphics_draw_line(ctx, GPoint(144-5, center_y - (SPACER * multiplier)), GPoint(144, center_y - (SPACER * multiplier)));
-		graphics_draw_line(ctx, GPoint(0, center_y - (SPACER * multiplier)), GPoint(5, center_y - (SPACER * multiplier)));
-		
-		// 20 = 0.333
-		multiplier = line_i + .333;
-		graphics_draw_line(ctx, GPoint(144-5, center_y - (SPACER * multiplier)), GPoint(144, center_y - (SPACER * multiplier)));
-		graphics_draw_line(ctx, GPoint(0, center_y - (SPACER * multiplier)), GPoint(5, center_y - (SPACER * multiplier)));
-		
-		// 25 = 0.416
-		multiplier = line_i + .416;
-		graphics_draw_line(ctx, GPoint(144-5, center_y - (SPACER * multiplier)), GPoint(144, center_y - (SPACER * multiplier)));
-		graphics_draw_line(ctx, GPoint(0, center_y - (SPACER * multiplier)), GPoint(5, center_y - (SPACER * multiplier)));
-		
-		// 35 = 0.583
-		multiplier = line_i + .583;
-		graphics_draw_line(ctx, GPoint(144-5, center_y - (SPACER * multiplier)), GPoint(144, center_y - (SPACER * multiplier)));
-		graphics_draw_line(ctx, GPoint(0, center_y - (SPACER * multiplier)), GPoint(5, center_y - (SPACER * multiplier)));
-
-		// 40 = 0.666
-		multiplier = line_i + .666;
-		graphics_draw_line(ctx, GPoint(144-5, center_y - (SPACER * multiplier)), GPoint(144, center_y - (SPACER * multiplier)));
-		graphics_draw_line(ctx, GPoint(0, center_y - (SPACER * multiplier)), GPoint(5, center_y - (SPACER * multiplier)));
-		
-		// 50 = 0.833
-		multiplier = line_i + .833;
-		graphics_draw_line(ctx, GPoint(144-5, center_y - (SPACER * multiplier)), GPoint(144, center_y - (SPACER * multiplier)));
-		graphics_draw_line(ctx, GPoint(0, center_y - (SPACER * multiplier)), GPoint(5, center_y - (SPACER * multiplier)));
-		
-		// 55 = 0.916
-		multiplier = line_i + .916;
-		graphics_draw_line(ctx, GPoint(144-5, center_y - (SPACER * multiplier)), GPoint(144, center_y - (SPACER * multiplier)));
-		graphics_draw_line(ctx, GPoint(0, center_y - (SPACER * multiplier)), GPoint(5, center_y - (SPACER * multiplier)));
+		// todo: preferences for right style
+		draw_tick_line(ctx, false, minute);
 	}
 
 	//invert screen	
@@ -141,7 +135,6 @@ void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 	
 
 	int y_offset =(int) -1 * (hour_percent * SPACER);
-	APP_LOG(APP_LOG_LEVEL_INFO, "y_offset: %d", y_offset);
 	layer_set_bounds(container_layer, GRect(0, y_offset, 144, 168));
 }
 
