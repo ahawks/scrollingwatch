@@ -65,8 +65,11 @@ static void in_received_handler(DictionaryIterator *iter, void *context) {
         autoconfig_in_received_handler(iter, context);
 
         // Here the updated settings are available
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "Configuration updated. Background: %s", 
-                getBackground() ? "true (black)" : "false (white)"); 
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Configuration updated. Background: %s and left: %d", 
+                getBackground() ? "true (black)" : "false (white)", getLeft()); 
+
+        // APP_LOG(APP_LOG_LEVEL_DEBUG, "Configuration updated. Left style: %d", 
+        //         getLeftstyle()); 
         layer_mark_dirty(container_layer);
 }
 
@@ -83,7 +86,22 @@ void draw_tick_line(GContext *ctx, bool left_side, int minute) {
 	// draw the tick
 	graphics_fill_rect(ctx, GRect(x, y, width, height),
 				  	0, GCornerNone);
+}
 
+void draw_tick_number(GContext *ctx, bool left_side, int minute) {
+	int center_y = CONTAINER_HEIGHT / 2;
+	float tmp = (float)minute / 60.0;
+	int distance = floor(SPACER * tmp);
+
+	int width = tick_widths[abs(minute % 60)/5];
+	int height = tick_heights[abs(minute % 60)/5];
+	int x = left_side ? 0 : 144 - width;
+	int y = center_y - 1 - distance; 
+	
+	// draw the number
+
+	// graphics_draw_text(ctx, "00",
+	// 			  	0, GCornerNone);
 }
 
 // rendering function for container layer. 
@@ -92,11 +110,16 @@ void container_update_proc(struct Layer *layer, GContext *ctx) {
 	
 	graphics_context_set_stroke_color(ctx, GColorBlack);
 	for (int minute = -90; minute < 60; minute += 5) {
-		// todo: preferences for left style
-		draw_tick_line(ctx, true, minute);
+		if (getLeft() == LEFT_LINES) {
+			draw_tick_line(ctx, true, minute);
+		} else if (getLeft() == LEFT_NUMBERS) {
+			draw_tick_number(ctx, true, minute);
+		}
 
-		// todo: preferences for right style
-		draw_tick_line(ctx, false, minute);
+		
+		if (getRight() == RIGHT_LINES) {
+			draw_tick_line(ctx, false, minute);
+		}
 	}
 
 	//invert screen	

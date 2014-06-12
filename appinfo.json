@@ -2,22 +2,49 @@
     "uuid": "0d3c16ef-6e0c-4fa3-9475-3cbda560971a",
     "capabilities": [ "configurable" ],
     "appKeys": {
-        "background": 0
+        "background": 0,
+        "left": 1,
+        "right": 2
     },
 
     "preferences": {
-        "embedded": true,
-        "debug": true,
-        "url" : "http://wiki.pebble-autoconfig.googlecode.com/git/example/autoconfig.html",
+        "embedded": false,
+        "debug": false,
+        "url" : "http://ahawks.github.io/scrollingwatch/settings.html",
         "description": "Use the form to configure your <strong>Pebble Watch</strong>",
         "items": [{
-                "name": "background",
-                "title": "Background color",
-                "type": "boolean",
-                "off-text": "White",
-                "on-text": "Black",
-                "default": true
-        }]
+            "name": "background",
+            "title": "Background color",
+            "type": "boolean",
+            "off-text": "White",
+            "on-text": "Black",
+            "default": false
+        }
+        ,
+        {
+            "name": "left",
+            "title": "Left decorator",
+            "type": "enum",
+            "choices": {
+                "OFF": "Off", 
+                "LINES": "Lines",
+                "NUMBERS": "Numbers"
+            },
+            "default": 1
+        }
+        ,
+        {
+            "name": "right",
+            "title": "Right decorator",
+            "type": "enum",
+            "choices": {
+                "OFF": "Off", 
+                "LINES": "Lines",
+                "NUMBERS": "Numbers"
+            },
+            "default": 1
+        }
+        ]
     },
     "resources": {
         "media": [
@@ -29,12 +56,12 @@
             }
         ]
     },
-    "versionCode": 1,
+    "versionCode": 2,
     "shortName": "Time Goes By",
     "longName": "Time Goes By",
     "watchapp": {
         "watchface": true
     },
     "companyName": "ahawks",
-    "versionLabel": "1.2"
+    "versionLabel": "1.3"
 }
