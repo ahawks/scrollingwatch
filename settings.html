@@ -287,6 +287,18 @@ div.clear {
 						document.querySelector("#left").value = 1;
 						</script>
 					</div>
+					<div class="pure-control-group">
+						<h4>Right decorator</h4>
+						<div class="description"></div>
+						<select id="right" class="pure-input-1" name="right">
+							<option value="0">Off</option>
+							<option value="1">Lines</option>
+							<option value="2">Numbers</option>
+						</select>
+						<script type="text/javascript">
+						document.querySelector("#right").value = 1;
+						</script>
+					</div>
 				</fieldset>
 				<div class="buttons">
 					<button id="save" class="pure-button pure-button-primary" type="submit">Save</button>
@@ -461,9 +473,6 @@ function findParentByClassName(node, className) {
 }
 
 function log (text) {
-	var logdiv = document.getElementById("log");
-	logdiv.innerHTML = text + "<br>" + logdiv.innerHTML;
-	console.log(text);
 }
 
 /* --------------------------
